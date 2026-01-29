@@ -1,0 +1,21 @@
+# Node/TypeScript
+node_modules/
+dist/
+build/
+*.log
+.env*
+
+# Rust
+/target/
+**/target/
+*.rs.bk
+*.rlib
+*.prof*
+
+# Editors/OS
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/

@@ -1,0 +1,103 @@
+openapi: 3.1.0
+info:
+  title: Logseq Skill Local Handshake
+  version: 0.1.0
+  description: |
+    Contract for local plugin-runtime handshake and capability refresh.
+    Transport is localhost-only; contract documents message schemas.
+servers:
+  - url: http://localhost:{port}
+    variables:
+      port:
+        default: "0"
+        description: Local port chosen by runtime
+security:
+  - LocalTokenAuth: []
+paths:
+  /rpc/hello:
+    post:
+      summary: Initial handshake from plugin to runtime
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HelloRequest'
+      responses:
+        '200':
+          description: Handshake acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelloAck'
+  /rpc/get-capabilities:
+    post:
+      summary: Refresh capability list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CapabilityRequest'
+      responses:
+        '200':
+          description: Capability list response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapabilityResponse'
+components:
+  securitySchemes:
+    LocalTokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: local-token
+  schemas:
+    Capability:
+      type: object
+      required: [capability_id, version, status]
+      properties:
+        capability_id:
+          type: string
+        version:
+          type: string
+        status:
+          type: string
+          enum: [enabled, disabled]
+        description:
+          type: string
+    HelloRequest:
+      type: object
+      required: [logseq_version, plugin_version, api_capabilities]
+      properties:
+        logseq_version:
+          type: string
+        plugin_version:
+          type: string
+        api_capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Capability'
+    HelloAck:
+      type: object
+      required: [server_version, enabled_capabilities]
+      properties:
+        server_version:
+          type: string
+        enabled_capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Capability'
+    CapabilityRequest:
+      type: object
+      properties:
+        session_id:
+          type: string
+    CapabilityResponse:
+      type: object
+      required: [capabilities]
+      properties:
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Capability'
