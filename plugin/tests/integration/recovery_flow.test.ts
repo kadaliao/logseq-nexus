@@ -26,7 +26,12 @@ describe('recovery flow', () => {
     const socket = new FakeSocket();
     let latestStatus: any;
 
-    connectRuntime(() => socket, (status) => {
+    connectRuntime(() => socket, {
+      authToken: 'test-token',
+      logseqVersion: '0.10',
+      pluginVersion: '0.1.0',
+      capabilities: [],
+    }, (status) => {
       latestStatus = status;
     });
 

@@ -8,12 +8,13 @@
 
 ## Summary
 
-Implement a reliable local plugin-to-runtime handshake that reports capabilities,
-requires a local auth token, and surfaces a clear in-plugin status panel with
-recovery guidance. The plugin is written in TypeScript for the Logseq environment,
-while the runtime and supporting services are written in Rust. The design uses a
-stable JSON-RPC message model over localhost WebSocket and enforces capability
-uniqueness by (capability ID + version).
+Implement a reliable local plugin-to-runtime handshake that reaches Ready state
+with a local auth token. The plugin is written in TypeScript for the Logseq
+environment, while the runtime and supporting services are written in Rust. The
+design uses a stable JSON-RPC message model over localhost WebSocket.
+
+**Phase 1 Scope**: Only the Ready-state handshake is in scope. Capability
+reporting and status panel/recovery are deferred.
 
 ## Technical Context
 
@@ -25,10 +26,8 @@ Rust: tokio, tokio-tungstenite (or equivalent WS stack), serde_json
 integration tests with running Logseq  
 **Target Platform**: Desktop (macOS/Windows/Linux) running Logseq locally  
 **Project Type**: Multi-project (Logseq plugin + Rust runtime)  
-**Performance Goals**: Ready <= 5s; capability list <= 2s after connection; recover
-<= 10s after transient disconnect  
-**Constraints**: Localhost-only; token-authenticated connection; capability uniqueness
-by (ID + version); user-visible status panel with recovery steps  
+**Performance Goals**: Ready <= 5s  
+**Constraints**: Localhost-only; token-authenticated connection  
 **Scale/Scope**: Single-user, single Logseq instance; one active runtime session
 
 ## Constitution Check
@@ -77,7 +76,7 @@ Output: /Volumes/Data-External/workspace/logseq-nexus/specs/001-plugin-capabilit
 
 - Confirm language/tooling choices for TypeScript plugin and Rust runtime.
 - Select WS + JSON-RPC stack and minimal schema approach.
-- Define auth token handling and capability identity rule.
+- Define auth token handling.
 - Align contract representation with OpenAPI for validation and documentation.
 
 ## Phase 1: Design & Contracts
@@ -89,8 +88,8 @@ Output:
 
 Design steps:
 - Model connection session, capability list, status events, and token linkage.
-- Define contract schemas for handshake and capability refresh.
-- Draft quickstart flows for local validation and recovery behavior.
+- Define contract schemas for handshake.
+- Draft quickstart flows for local validation.
 
 Agent context update:
 - Run `/Volumes/Data-External/workspace/logseq-nexus/.specify/scripts/bash/update-agent-context.sh codex`

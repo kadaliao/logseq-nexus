@@ -27,15 +27,20 @@ describe('ready state flow', () => {
   it('transitions to ready after hello ack', () => {
     const socket = new FakeSocket();
     let latestStatus = createInitialStatus();
+    const caps: Capability[] = [
+      { capabilityId: 'pages.list', version: '1', status: 'enabled' },
+    ];
 
-    connectRuntime(() => socket, (status) => {
+    connectRuntime(() => socket, {
+      authToken: 'test-token',
+      logseqVersion: '0.10',
+      pluginVersion: '0.1.0',
+      capabilities: caps,
+    }, (status) => {
       latestStatus = status;
     });
 
     socket.emit('open');
-    const caps: Capability[] = [
-      { capabilityId: 'pages.list', version: '1', status: 'enabled' },
-    ];
 
     const hello = createHelloRequest('0.10', '0.1.0', caps);
     const ack = {

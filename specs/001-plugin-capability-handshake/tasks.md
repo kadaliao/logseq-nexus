@@ -12,10 +12,12 @@ description: "Task list template for feature implementation"
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
+**Phase 1 Scope**: This task list covers Setup, Foundational, and User Story 1 only.
+
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
+- **[Story]**: Which user story this task belongs to (US1)
 - Include exact file paths in descriptions
 
 ## Path Conventions
@@ -82,147 +84,22 @@ description: "Task list template for feature implementation"
 
 ---
 
-## Phase 4: User Story 2 - Capability Awareness (Priority: P2)
-
-**Goal**: Accurate capability list reported and refreshable
-
-**Independent Test**: Request capabilities and confirm list matches current environment
-
-### Tests for User Story 2 ⚠️
-
-- [x] T024 [P] [US2] Contract test for capability refresh in `mcp-server/tests/contract/capability_refresh_test.rs`
-- [x] T025 [P] [US2] Unit test for capability uniqueness in `mcp-server/tests/unit/capability_list_test.rs`
-
-### Implementation for User Story 2
-
-- [x] T026 [P] [US2] Implement capability detection in `plugin/src/runtime/capabilities.ts`
-- [x] T027 [P] [US2] Implement capability refresh endpoint in `mcp-server/src/runtime/capabilities.rs`
-- [x] T028 [US2] Enforce (ID + version) uniqueness in `mcp-server/src/state/capabilities.rs`
-- [x] T029 [US2] Implement plugin-side capability refresh request in `plugin/src/runtime/capabilities.ts`
-
-**Checkpoint**: User Story 2 independently functional
-
----
-
-## Phase 5: User Story 3 - Status Visibility and Recovery (Priority: P3)
-
-**Goal**: In-plugin status panel shows connection state and recovery steps
-
-**Independent Test**: Simulate disconnect and verify recovery guidance appears
-
-### Tests for User Story 3 ⚠️
-
-- [x] T030 [P] [US3] UI/unit test for status panel states in `plugin/tests/unit/status_panel.test.ts`
-- [x] T031 [P] [US3] Integration test for disconnect recovery messaging in `plugin/tests/integration/recovery_flow.test.ts`
-
-### Implementation for User Story 3
-
-- [x] T032 [P] [US3] Build status panel UI in `plugin/src/ui/status_panel.tsx`
-- [x] T033 [US3] Bind connection state to UI in `plugin/src/ui/status_panel.tsx`
-- [x] T034 [US3] Populate recovery steps in `plugin/src/state/connection.ts`
-
-**Checkpoint**: All user stories independently functional
-
----
-
-## Phase N: Polish & Cross-Cutting Concerns
-
-**Purpose**: Improvements that affect multiple user stories
-
-- [x] T035 [P] Documentation updates in `docs/` (handshake, auth, capability rules)
-- [x] T036 Code cleanup and refactoring in `plugin/src/` and `mcp-server/src/`
-- [x] T037 Performance measurement to validate Ready/capability/recovery budgets in `docs/perf/handshake.md`
-- [x] T038 [P] Additional unit tests (if needed) in `plugin/tests/unit/` and `mcp-server/tests/unit/`
-- [x] T039 Security hardening review in `docs/security/handshake.md`
-- [x] T040 Run quickstart validation in `specs/001-plugin-capability-handshake/quickstart.md`
-
----
-
 ## Dependencies & Execution Order
-
 ### Phase Dependencies
 
 - **Setup (Phase 1)**: No dependencies - can start immediately
-- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phase 3+)**: All depend on Foundational phase completion
-  - User stories can then proceed in parallel (if staffed)
-  - Or sequentially in priority order (P1 → P2 → P3)
-- **Polish (Final Phase)**: Depends on all desired user stories being complete
+- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS User Story 1
+- **User Story 1 (Phase 3)**: Starts after Foundational completes
 
-### User Story Dependencies
-
-- **User Story 1 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories
-- **User Story 2 (P2)**: Can start after Foundational (Phase 2) - Independent of US1
-- **User Story 3 (P3)**: Can start after Foundational (Phase 2) - Independent of US1/US2
-
-### Within Each User Story
+### Within User Story 1
 
 - Tests MUST be written and FAIL before implementation
 - Models before services
 - Services before endpoints
 - Core implementation before integration
-- Story complete before moving to next priority
-
-### Parallel Opportunities
-
-- Setup tasks marked [P] can run in parallel
-- Foundational tasks marked [P] can run in parallel (within Phase 2)
-- Once Foundational phase completes, all user stories can start in parallel (if team capacity allows)
-- All tests for a user story marked [P] can run in parallel
-
----
-
-## Parallel Example: User Story 1
-
-```bash
-# Launch all tests for User Story 1 together:
-Task: "Contract test for hello handshake in mcp-server/tests/contract/hello_handshake_test.rs"
-Task: "Integration test for Ready state in plugin/tests/integration/ready_state.test.ts"
-
-# Launch WS connection tasks together:
-Task: "Implement plugin WS connection bootstrap in plugin/src/runtime/connection.ts"
-Task: "Implement runtime WS server acceptor in mcp-server/src/runtime/server.rs"
-```
-
----
-
-## Implementation Strategy
-
-### MVP First (User Story 1 Only)
-
-1. Complete Phase 1: Setup
-2. Complete Phase 2: Foundational (CRITICAL - blocks all stories)
-3. Complete Phase 3: User Story 1
-4. **STOP and VALIDATE**: Test User Story 1 independently
-5. Deploy/demo if ready
-
-### Incremental Delivery
-
-1. Complete Setup + Foundational → Foundation ready
-2. Add User Story 1 → Test independently → Deploy/Demo (MVP)
-3. Add User Story 2 → Test independently → Deploy/Demo
-4. Add User Story 3 → Test independently → Deploy/Demo
-5. Each story adds value without breaking previous stories
-
-### Parallel Team Strategy
-
-With multiple developers:
-
-1. Team completes Setup + Foundational together
-2. Once Foundational is done:
-   - Developer A: User Story 1
-   - Developer B: User Story 2
-   - Developer C: User Story 3
-3. Stories complete and integrate independently
-
----
 
 ## Notes
 
 - [P] tasks = different files, no dependencies
 - [Story] label maps task to specific user story for traceability
-- Each user story should be independently completable and testable
 - Verify tests fail before implementing
-- Commit after each task or logical group
-- Stop at any checkpoint to validate story independently
-- Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
