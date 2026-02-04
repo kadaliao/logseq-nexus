@@ -1,0 +1,192 @@
+openapi: 3.0.3
+info:
+  title: Logseq Compatibility Matrix API (Discovery)
+  version: 0.1.0
+  description: Read-only endpoints to serve the compatibility matrix, search strategy decision, and known gaps.
+paths:
+  /compatibility/versions:
+    get:
+      summary: List supported Logseq versions
+      responses:
+        "200":
+          description: Supported versions list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupportedVersionsResponse"
+  /compatibility/matrix:
+    get:
+      summary: Retrieve the full compatibility matrix
+      responses:
+        "200":
+          description: Full matrix
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompatibilityMatrixResponse"
+  /compatibility/versions/{version}:
+    get:
+      summary: Retrieve compatibility status for a specific Logseq version
+      parameters:
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Compatibility entries for the requested version
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VersionCompatibilityResponse"
+        "404":
+          description: Version not supported or out of scope
+  /search-strategy:
+    get:
+      summary: Retrieve the search strategy decision
+      responses:
+        "200":
+          description: Search strategy decision
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchStrategyDecision"
+  /gaps:
+    get:
+      summary: Retrieve known gaps and follow-up actions
+      responses:
+        "200":
+          description: Gap list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GapsResponse"
+components:
+  schemas:
+    SupportedVersionsResponse:
+      type: object
+      required: [versions]
+      properties:
+        versions:
+          type: array
+          items:
+            $ref: "#/components/schemas/LogseqVersion"
+    CompatibilityMatrixResponse:
+      type: object
+      required: [matrix]
+      properties:
+        matrix:
+          type: array
+          items:
+            $ref: "#/components/schemas/CompatibilityEntry"
+    VersionCompatibilityResponse:
+      type: object
+      required: [version, entries]
+      properties:
+        version:
+          $ref: "#/components/schemas/LogseqVersion"
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/CompatibilityEntry"
+    GapsResponse:
+      type: object
+      required: [gaps]
+      properties:
+        gaps:
+          type: array
+          items:
+            $ref: "#/components/schemas/Gap"
+    LogseqVersion:
+      type: object
+      required: [version, support_status]
+      properties:
+        version:
+          type: string
+        release_date:
+          type: string
+          format: date
+        support_status:
+          type: string
+          enum: [supported, out_of_scope]
+          description: Supported versions appear in the matrix; out_of_scope versions are listed separately.
+        notes:
+          type: string
+    CompatibilityEntry:
+      type: object
+      required: [version, capability, status, summary, evidence]
+      properties:
+        version:
+          type: string
+        capability:
+          type: string
+          enum: [block_crud, advanced_queries, search]
+        status:
+          type: string
+          enum: [Supported, Partial, Unsupported]
+          description: Status labels for supported versions. Out-of-scope versions are not matrix entries.
+        summary:
+          type: string
+        evidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/EvidenceNote"
+        last_verified:
+          type: string
+          format: date
+    EvidenceNote:
+      type: object
+      required: [source_type, detail]
+      properties:
+        source_type:
+          type: string
+          enum: [doc, test, observation]
+        detail:
+          type: string
+        captured_at:
+          type: string
+          format: date
+        link:
+          type: string
+    SearchStrategyDecision:
+      type: object
+      required: [primary_method, fallback_rules, applies_to_versions, rationale]
+      properties:
+        primary_method:
+          type: string
+        fallback_rules:
+          type: array
+          items:
+            type: string
+        applies_to_versions:
+          type: array
+          items:
+            type: string
+        rationale:
+          type: string
+        last_updated:
+          type: string
+          format: date
+    Gap:
+      type: object
+      required: [id, description, impact, follow_up_action, status]
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        impact:
+          type: string
+        affected_versions:
+          type: array
+          items:
+            type: string
+        capability:
+          type: string
+          enum: [block_crud, advanced_queries, search]
+        follow_up_action:
+          type: string
+        status:
+          type: string
+          enum: [open, mitigated, closed]

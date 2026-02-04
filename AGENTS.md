@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2026-01-28
 
 ## Active Technologies
+- TypeScript 5.6.x (Logseq plugin), Rust stable (MSRV 1.75+) + Logseq Plugin API, tokio/tokio-tungstenite, serde/serde_json, vites (002-logseq-compatibility-matrix)
+- N/A (documentation-only phase; runtime relies on Logseq graph storage) (002-logseq-compatibility-matrix)
 
 - TypeScript 5.x (Logseq plugin) + Rust stable (MSRV 1.75+) + Logseq plugin API; native WebSocket; JSON-RPC message schema; (001-plugin-capability-handshake)
 
@@ -22,6 +24,7 @@ cargo test [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECH
 TypeScript 5.x (Logseq plugin) + Rust stable (MSRV 1.75+): Follow standard conventions
 
 ## Recent Changes
+- 002-logseq-compatibility-matrix: Added TypeScript 5.6.x (Logseq plugin), Rust stable (MSRV 1.75+) + Logseq Plugin API, tokio/tokio-tungstenite, serde/serde_json, vites
 
 - 001-plugin-capability-handshake: Added TypeScript 5.x (Logseq plugin) + Rust stable (MSRV 1.75+) + Logseq plugin API; native WebSocket; JSON-RPC message schema;
 
